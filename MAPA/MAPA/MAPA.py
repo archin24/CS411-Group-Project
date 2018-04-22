@@ -1,31 +1,65 @@
-
 import requests
 from flask import Flask
 from flask import request
 from flask import render_template
 import json
+import pymongo
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
+client = MongoClient()
+db = client.cache
+collection = db.artist_ids
+
 @app.route("/")
 def Test():
-	url = "https://api.spotify.com/v1/search"
 
-	#artist = input('artist name:')
-	artist = 'coldplay'
-	querystring = {"q":artist,"type":"artist"}
+    #artist = input('artist name:')
+    artist = 'coldplay'
 
-	headers = {
-    	'Authorization': "Bearer BQAVMT8JAvRM8qgpsByuUv4Q1Gx_ay_v-X4Ub0075wGCwgp7QzPuuN4wznDK-WzS3geG4Qh91v_ONkzgWBuasyxG2uYLoyBq9djJfNLPO3d6T0teUhl176S-I0fzueXSHhngCn3Vo6DM",
-    	'Cache-Control': "no-cache",
-    	'Postman-Token': "ef420abf-6166-4c0d-ba3d-02306d888b81"
-    	}
+    artist_id = checkCache(artist)
 
-	response = requests.request("GET", url, headers=headers, params=querystring)
+    url = "https://api.spotify.com/v1/artists/" + artist_id[0]
 
-	json_data = response.json()
-	print(json.dumps(json_data, sort_keys=True, indent=4))
-	return(str(json.dumps(json_data, sort_keys=True, indent=4)))
+    headers = {
+        'Authorization': "Bearer BQBhUp2Y4ddhXT5qQoRBVJjOC2t7c5Z2DWBgy3UsMCJPOHr9A3OMJy1BEvrjyT_V_jIkou21RGxwjnPavLhcYGFym1B53re9FoiQH_czBPjVSWb3IG0GlMTxQz1GH5nbMD69M1gEFXil",
+        'Cache-Control': "no-cache",
+        'Postman-Token': "a6b84a57-f95f-49e8-b399-953f887328e4"
+    }
+
+    response = requests.request("GET", url, headers=headers)
+    
+
+    json_data = response.json()
+    return(str(json.dumps(json_data, sort_keys=True, indent=4)))
+
+# Checks the cache to see if the artist's id is already there. If not, makes API call and puts it in
+def checkCache(artist):
+    if collection.find({"artist": artist}) != None:
+        return collection.distinct("id")
+    else:
+        # MAKE THE API CALL
+        url = "https://api.spotify.com/v1/search"
+
+        querystring = {"q":artist,"type":"artist"}
+
+        headers = {
+            'Authorization': "Bearer BQBhUp2Y4ddhXT5qQoRBVJjOC2t7c5Z2DWBgy3UsMCJPOHr9A3OMJy1BEvrjyT_V_jIkou21RGxwjnPavLhcYGFym1B53re9FoiQH_czBPjVSWb3IG0GlMTxQz1GH5nbMD69M1gEFXil",
+            'Cache-Control': "no-cache",
+            'Postman-Token': "ef420abf-6166-4c0d-ba3d-02306d888b81"
+            }
+
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        
+
+        json_data = response.json()
+        artist_id = json_data["artists"]["items"][0]["id"]
+
+        collection.insert_one({"artist": artist, "id": artist_id})
+        return collection.distinct("id")
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -44,72 +78,5 @@ def login():
     # was GET or the credentials were invalid
     return render_template('login.html', error=error)
 
-
-if __name__ == "__main__":
-    app.run()
-
-from flask import Flask, render_template, request
-import requests
-
-app = Flask(_name_)
-
-@app.route('/temperature', methods=['POST'])
-def temperature():
-    zipcode = request.form['zip']
-    r = requests.get('http://api.openweathermap.org/data/2.5/weather?zip='+zipcode+',us&appid=b0e0bbe93793b39e76cc1b1a65e32369')
-    json_object = r.json()
-    temp_k = float(json_object['main']['temp'])
-    temp_f = round(((temp_k - 273.15) * 1.8 + 32),1)
-    return render_template('temperature.html', temp=temp_f)
-
-@app.route('/')
-def index():
-	return render_template('index.html')
-
-if _name_ == '_main_':
-    app.run(debug=True)
-
-
-from flask import Flask, render_template, request
-import requests
-import spotipy
-
-sp = spotipy.Spotify()
-
-app = Flask(__name__)
-
-@app.route('/')
-def Test():
-
-    #zipcode = request.form['zip']
-    artists = input('artist:')
-    r = requests.get('https://api.spotify.com/v1/artists/'+artists)
-    json_object = r.json()
-    ##temp_k = float(json_object['main']['temp'])
-    ##temp_f = round(((temp_k - 273.15) * 1.8 + 32),1)
-    return str(json_object)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-	artist = input('artist name:')
-	url = 'https://api.spotify.com/v1/search?q='+artist+'&type=artist'
-
-	json_data = requests.get(url).json()
-
-	return str(json_data)
-	#api_address = 'http://api.openweathermap.org/data/2.5/weather?appid=86309392d65f39d0c7612bad97ac704c&q='
-	#city = input("city name:")
-
-	url = api_address + city
-
-	json_data = requests.get(url).json()
-
-	return str(json_data)
-
-
 '''
 
-
-#Use Postman
