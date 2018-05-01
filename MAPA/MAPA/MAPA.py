@@ -11,19 +11,19 @@ app = Flask(__name__)
 client = MongoClient()
 db = client.cache
 collection = db.artist_ids
+#collection.delete_many({})
 
 @app.route("/")
 def Test():
 
     #artist = input('artist name:')
     artist = 'coldplay'
-
     artist_id = checkCache(artist)
 
-    url = "https://api.spotify.com/v1/artists/" + artist_id[0]
+    url = "https://api.spotify.com/v1/artists/" + artist_id
 
     headers = {
-        'Authorization': "Bearer BQBhUp2Y4ddhXT5qQoRBVJjOC2t7c5Z2DWBgy3UsMCJPOHr9A3OMJy1BEvrjyT_V_jIkou21RGxwjnPavLhcYGFym1B53re9FoiQH_czBPjVSWb3IG0GlMTxQz1GH5nbMD69M1gEFXil",
+        'Authorization': "Bearer BQCtuh-jlkmD5y_GyqXeWuGcjCGfAvZTNxMd8RNAfIe0F-hyepgpyrCIlieZ5nMiwGqX57prTlstHgoF6plDoexWgDeLIbcuwxd7yGDXxEpckUJihxmn-MfI2FuQrY5w0Kx_IFFKcZFz",
         'Cache-Control': "no-cache",
         'Postman-Token': "a6b84a57-f95f-49e8-b399-953f887328e4"
     }
@@ -32,12 +32,16 @@ def Test():
     
 
     json_data = response.json()
+
+
+#    return(render_template('index.html'))
     return(str(json.dumps(json_data, sort_keys=True, indent=4)))
+
 
 # Checks the cache to see if the artist's id is already there. If not, makes API call and puts it in
 def checkCache(artist):
-    if collection.find({"artist": artist}) != None:
-        return collection.distinct("id")
+    if collection.find_one({"artist": artist}) != None:
+        return collection.find_one({"artist":artist})['id']
     else:
         # MAKE THE API CALL
         url = "https://api.spotify.com/v1/search"
@@ -45,7 +49,7 @@ def checkCache(artist):
         querystring = {"q":artist,"type":"artist"}
 
         headers = {
-            'Authorization': "Bearer BQBhUp2Y4ddhXT5qQoRBVJjOC2t7c5Z2DWBgy3UsMCJPOHr9A3OMJy1BEvrjyT_V_jIkou21RGxwjnPavLhcYGFym1B53re9FoiQH_czBPjVSWb3IG0GlMTxQz1GH5nbMD69M1gEFXil",
+            'Authorization': "Bearer BQCtuh-jlkmD5y_GyqXeWuGcjCGfAvZTNxMd8RNAfIe0F-hyepgpyrCIlieZ5nMiwGqX57prTlstHgoF6plDoexWgDeLIbcuwxd7yGDXxEpckUJihxmn-MfI2FuQrY5w0Kx_IFFKcZFz",
             'Cache-Control': "no-cache",
             'Postman-Token': "ef420abf-6166-4c0d-ba3d-02306d888b81"
             }
@@ -57,7 +61,8 @@ def checkCache(artist):
         artist_id = json_data["artists"]["items"][0]["id"]
 
         collection.insert_one({"artist": artist, "id": artist_id})
-        return collection.distinct("id")
+        print(collection.find_one({"artist":artist})['id'])
+        return collection.find_one({"artist":artist})['id']
 
 
 
