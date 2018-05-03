@@ -3,26 +3,26 @@
 <head>
     <title>MAPS: A Social Music Application</title>
 </head>
-<head>
-    <link href='https://fonts.googleapis.com/css?family=Allerta Stencil' rel='stylesheet'> 
 <style>
 body {
-    margin: 0;
+  margin: 0;
 }
-  
-  /* Style of header */
+/* Style of header */
 .header {
-    padding-left: 15px;
-    color: #e7f2f7;
-    font-family: 'Allerta Stencil';
-    font-size: 50px;
-    text-align: left;
-  }
+    background-color: #f2f2f2;
+    padding: 3px;
+    text-align: center;
+}
 </style>
 </head>
+<body>
 
+<div class="header">
+  <h1>MAPS</h1>
+</div>
+
+</body>
 </html>
-
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,12 +31,10 @@ body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
 }
-
 .topnav {
   overflow: hidden;
   background-color: #333;
 }
-
 .topnav a {
   float: left;
   color: #f2f2f2;
@@ -45,12 +43,10 @@ body {
   text-decoration: none;
   font-size: 17px;
 }
-
 .topnav a:hover {
   background-color: #ddd;
   color: black;
 }
-
 .topnav a.active {
   background-color: #ff0066;
   color: white;
@@ -64,7 +60,6 @@ body {
   font-size: 17px;
   border: none;
 }
-
 .topnav .search-container button {
   float: right;
   padding: 6px 10px;
@@ -75,11 +70,9 @@ body {
   border: none;
   cursor: pointer;
 }
-
 .topnav .search-container button:hover {
   background: #ccc;
 }
-
 @media screen and (max-width: 600px) {
   .topnav .search-container {
     float: none;
@@ -96,7 +89,6 @@ body {
     border: 1px solid #ccc;  
   }
 }
-
 </style>
 </head>
 <body>
@@ -107,8 +99,7 @@ body {
   <a href="events.html">Events & Festivals</a>
   <a href="news.html">News</a>
   <a href="contact.html">Contact</a>
-  <a href="about.html">About</a>
-  <a href="login.html">LOGIN</a>
+  <a href="#about">About</a>
   <div class="search-container">
     <form action="/action_page.php">
       <input type="text" placeholder="Search.." name="search">
@@ -124,24 +115,13 @@ body {
 <body>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<body>
-
-    <div class="header">
-      <h1>MAPS</h1>
-    </div>
-    
-    </body>
-    
 <style>
 body {
     font-family: Arial;
 }
-
 * {
     box-sizing: border-box;
 }
-
 form.example input[type=text] {
     padding: 10px;
     font-size: 17px;
@@ -150,7 +130,6 @@ form.example input[type=text] {
     width: 80%;
     background: #ffffff;
 }
-
 form.example button {
     float: left;
     width: 20%;
@@ -162,11 +141,9 @@ form.example button {
     border-left: none;
     cursor: pointer;
 }
-
 form.example button:hover {
     background: #ccc;
 }
-
 form.example::after {
     content: "";
     clear: both;
@@ -174,6 +151,49 @@ form.example::after {
 }
 </style>
 </body>
+<style>
+div.sults {
+  margin: 20px;
+}
+</style> 
+<div class="sults">
+  <h1 class="pagetitle"> Artist Results</h2>
+  <style>
+  body {
+    background-image: url("https://mir-s3-cdn-cf.behance.net/project_modules/fs/9dcd2430267561.561ba9fedaef6.jpg");
+    background-position: left top;
+    background-repeat: no-repeat;
+    } 
+    h1.pagetitle {
+    border-width: 2px; 
+    border-color: #ee3e80;
+    padding: 3px;
+    border-style: solid;
+    background-color: #ffffff;  
+    text-align: center;
+    }
+    p.artistinfo {
+    border-width: 2px; 
+    border-color: #ee3e80;
+    padding: 3px;
+    border-style: solid;
+    background-color: #ffffff;
+   }
+
+   img {
+    max-width: 100%;
+    max-height: 100%;
+   }
+  </style>
+  <p class="artistinfo">
+  <img src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/9dcd2430267561.561ba9fedaef6.jpg"  align="left"/> 
+  Artist Name: {{artist_info.name}} <br> Genres: {{artist_info.genres}} </p>
+   </div> 
+</form>
+
+<!-- artist image should be: -->
+
+</html>
 
 <div style="padding-left:850px">
   <h2 style="padding-top:15px">Results</h2>
