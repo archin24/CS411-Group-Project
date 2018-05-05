@@ -82,7 +82,11 @@ def result():
 
 @app.route("/events.html")
 def events():
-    return(render_template('events.html'))
+	genre = input('genre:')
+	city = input('city:')
+	subgenreCode = getGenreCode(genre)
+	response = getMusicEvents(city, subgenreCode)
+    return(render_template('events.html', response = response))
 
 @app.route("/news.html")
 def news():
@@ -104,14 +108,14 @@ def about():
 @app.route("/search", methods=['POST'])
 def Test():
 
-    #artist = input('artist name:')
-    artist = 'coldplay'
+    artist = input('artist name:')
+    #artist = 'coldplay'
     artist_id = checkCache(artist)
 
     url = "https://api.spotify.com/v1/artists/" + artist_id
 
     headers = {
-        'Authorization': "Bearer BQCtuh-jlkmD5y_GyqXeWuGcjCGfAvZTNxMd8RNAfIe0F-hyepgpyrCIlieZ5nMiwGqX57prTlstHgoF6plDoexWgDeLIbcuwxd7yGDXxEpckUJihxmn-MfI2FuQrY5w0Kx_IFFKcZFz",
+        'Authorization': "Bearer BQDpbxVhgDTEkPgKmt10S-sfJ09ZlaNTWfjhutqWgpdiZSbRKSM8oXIMyYK60qjJLTJbuk_CwuSq9NOILmoc6BPRD_EFzqIVqeTWAiyc30UEH5At2CecrQmRP_TbSEajc150QVZ-2vaMNWFOdqkv5ptyUQ96_9c",
         'Cache-Control': "no-cache",
         'Postman-Token': "a6b84a57-f95f-49e8-b399-953f887328e4"
     }
@@ -119,11 +123,11 @@ def Test():
     response = requests.request("GET", url, headers=headers)
     
 
-    json_data = response.json()
+    artist_info = response.json()
 
 
-#    return(render_template('index.html'))
-    return(str(json.dumps(json_data, sort_keys=True, indent=4)))
+    return(render_template('results.html', artist_info = artist_info))
+    #return(str(json.dumps(json_data, sort_keys=True, indent=4)))
 
 
 # Checks the cache to see if the artist's id is already there. If not, makes API call and puts it in
@@ -137,7 +141,7 @@ def checkCache(artist):
         querystring = {"q":artist,"type":"artist"}
 
         headers = {
-            'Authorization': "Bearer BQCtuh-jlkmD5y_GyqXeWuGcjCGfAvZTNxMd8RNAfIe0F-hyepgpyrCIlieZ5nMiwGqX57prTlstHgoF6plDoexWgDeLIbcuwxd7yGDXxEpckUJihxmn-MfI2FuQrY5w0Kx_IFFKcZFz",
+            'Authorization': "Bearer BQDpbxVhgDTEkPgKmt10S-sfJ09ZlaNTWfjhutqWgpdiZSbRKSM8oXIMyYK60qjJLTJbuk_CwuSq9NOILmoc6BPRD_EFzqIVqeTWAiyc30UEH5At2CecrQmRP_TbSEajc150QVZ-2vaMNWFOdqkv5ptyUQ96_9c",
             'Cache-Control': "no-cache",
             'Postman-Token': "ef420abf-6166-4c0d-ba3d-02306d888b81"
             }
@@ -152,25 +156,61 @@ def checkCache(artist):
         #print(collection.find_one({"artist":artist})['id'])
         return collection.find_one({"artist":artist})['id']
 
+def getGenreCode(genre):
+    if genre =="Alternative":
+        return "3001"
+    if genre == "Blues & Jazz":
+        return "3002"
+    if genre == "Classical":
+        return "3003"
+    if genre == "Country":
+        return "3004"
+    if genre == "Cultural":
+        return "3005"
+    if genre == "EDM / Electronic":
+        return "3006"
+    if genre == "Folk":
+        return "3007"
+    if genre == "Hip Hop / Rap":
+        return "3008"
+    if genre == "Indie":
+        return "3009"
+    if genre == "Latin":
+        return "3010"
+    if genre == "Metal":
+        return "3011"
+    if genre == "Opera":
+        return "3012"
+    if genre =="Pop":
+        return "3013"
+    if genre =="R&B":
+        return "3014"
+    if genre == "Reggae":
+        return "3015"
+    if genre == "Religious/Spiritual":
+        return "3016"
+    if genre == "Rock":
+        return "3017"
+    if genre == "Top 40":
+        return "3018"
+    if genre =="Other":
+        return "3019"
+    else:
+        print("No Genre given")
 
+def getMusicEvents(city, subgenreCode):
+    response = requests.get(
+
+        "https://www.eventbriteapi.com/v3/events/search/?location.address=" + city +  "&categories=103&subcategories="+ subgenreCode + "&token=Y7BYBBACTDQLL3MR6XBX",
+        headers = {
+            "Authorization": "Bearer Y7BYBBACTDQLL3MR6XBX",
+         },
+        verify = True,  # Verify SSL certificate
+    )
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-'''
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if valid_login(request.form['username'],
-                       request.form['password']):
-            return log_the_user_in(request.form['username'])
-        else:
-            error = 'Invalid username/password'
-    # the code below is executed if the request method
-    # was GET or the credentials were invalid
-    return render_template('login.html', error=error)
-
-'''
 
 
